@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hokuto - A Vibecoded Mess That Somehow Renders HTML</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="hero">
+        <nav class="nav">
+            <div class="nav-brand">Hokuto</div>
+            <div class="nav-links">
+                <a href="#features">Features*</a>
+                <a href="#demos">Demos</a>
+                <a href="#faq">FAQ</a>
+                <a href="#faq" class="nav-github">Source: Trust Me Bro</a>
+            </div>
+        </nav>
+        <div class="hero-content">
+            <h1>Hokuto</h1>
+            <p class="hero-tagline">A vibecoded mess that somehow renders HTML/CSS</p>
+            <p class="hero-subtitle">Written in Rust, because of course it is.</p>
+            <p class="hero-description">
+                Its development arc resembles Star Wars Episode III &mdash;
+                it seems promising, but you know it won't end well.
+                Yet here we are, parsing HTML documents, applying CSS styling,
+                computing layout, and rendering pixels. Against all odds.
+            </p>
+            <div class="hero-buttons">
+                <a href="wasm/index.html" class="btn btn-primary">Try It (YOLO)</a>
+                <a href="demonstration.html" class="btn btn-secondary">See The Evidence</a>
+            </div>
+            <p class="hero-disclaimer">* Results may vary. Side effects include questioning your life choices.</p>
+        </div>
+    </header>
+
+    <main>
+        <section id="features" class="section">
+            <h2>Features*</h2>
+            <p class="section-subtitle">*"Features" is a strong word. Let's say "things it does, sometimes."</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#9881;</div>
+                    <h3>120+ CSS Properties</h3>
+                    <p>We kept adding CSS properties until the code became sentient. It now refuses to implement tables.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#9889;</div>
+                    <h3>"High Performance"</h3>
+                    <p>Written in Rust with OpenGL. It's fast because we don't do half the things browsers do. Ignorance is bliss.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#127760;</div>
+                    <h3>Cross-Platform</h3>
+                    <p>Runs on Linux and WASM (Does that even count as cross-platform?). Each platform breaks in its own unique and beautiful way.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128196;</div>
+                    <h3>214 Tests Pass</h3>
+                    <p>We have 214 tests that pass. We don't talk about the edge cases we carefully avoided testing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#127912;</div>
+                    <h3>Visual Effects</h3>
+                    <p>Box shadows, gradients, filters... because if pixels are gonna be wrong, they should at least be pretty.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128295;</div>
+                    <h3>Flexbox & Grid</h3>
+                    <p>Layout engines that took browsers years to perfect. We did it in a few weekends. What could go wrong?</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-dark">
+            <h2>The CSS Iceberg</h2>
+            <p class="section-subtitle">What we support vs. what we pretend doesn't exist</p>
+            <div class="css-categories">
+                <div class="css-category">
+                    <h4>Layout (mostly works)</h4>
+                    <ul>
+                        <li>Flexbox (our pride and joy)</li>
+                        <li>CSS Grid (we're as surprised as you)</li>
+                        <li>Float &amp; Clear (legacy trauma)</li>
+                        <li>Positioning (sticky was a nightmare)</li>
+                        <li>Box model (the easy part, lol)</li>
+                    </ul>
+                </div>
+                <div class="css-category">
+                    <h4>Typography</h4>
+                    <ul>
+                        <li>Fonts (thanks cosmic-text)</li>
+                        <li>Text alignment (left is default, fight me)</li>
+                        <li>Line height (deceptively complex)</li>
+                        <li>Ellipsis (harder than it looks)</li>
+                        <li>Word break (CJK? what's that?)</li>
+                    </ul>
+                </div>
+                <div class="css-category">
+                    <h4>Pretty Things</h4>
+                    <ul>
+                        <li>Colors (140 named colors, why)</li>
+                        <li>Gradients (3 types, 1000 bugs)</li>
+                        <li>Backgrounds (it's just rectangles)</li>
+                        <li>Border radius (circles are hard)</li>
+                        <li>Shadows (blur go brrrr)</li>
+                    </ul>
+                </div>
+                <div class="css-category">
+                    <h4>Chaos Territory</h4>
+                    <ul>
+                        <li>CSS Variables (scope is fun)</li>
+                        <li>Transforms (matrix math at 3am)</li>
+                        <li>Filters (GPU says hello)</li>
+                        <li>Animations (state machines from hell)</li>
+                        <li>::before/::after (cursed content)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="demos" class="section">
+            <h2>The Evidence</h2>
+            <p class="section-subtitle">Don't just take our word for it. See the chaos yourself.</p>
+            <div class="demos-grid">
+                <a href="wasm/index.html" class="demo-card">
+                    <div class="demo-preview demo-wasm"></div>
+                    <h3>WASM Playground</h3>
+                    <p>Try Hokuto in your browser. Break things in real-time. We dare you to find the edge cases.</p>
+                </a>
+                <a href="demonstration.html" class="demo-card">
+                    <div class="demo-preview demo-tests"></div>
+                    <h3>The Wall of Proof</h3>
+                    <p>214 side-by-side comparisons. Spot the differences. There are fewer than you'd expect.</p>
+                </a>
+            </div>
+        </section>
+
+        <section id="faq" class="section section-dark">
+            <h2>Frequently Questioned Decisions</h2>
+            <p class="section-subtitle">The questions we ask ourselves at 3am</p>
+            <div class="faq-list">
+                <details class="faq-item">
+                    <summary>What is Hokuto?</summary>
+                    <p>
+                        Hokuto is what happens when you think "how hard can rendering HTML be?" and then
+                        spend weeks finding out. It's a vibecoded rendering engine written in Rust that
+                        somehow manages to display (some) web content. We're as surprised as you are.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Why is it called "Hokuto"?</summary>
+                    <p>
+                        The author has a thing for naming projects after Japanese train lines. Hokuto is
+                        a limited express train running between Sapporo and Hakodate. Does it have anything
+                        to do with HTML rendering? Absolutely not. Does it sound cool? Yes. That's the
+                        entire decision-making process. Previous projects include equally random train names.
+                        It's a lifestyle.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Why not just use a real browser?</summary>
+                    <p>
+                        Great question. We ask ourselves this daily. The official answer is "performance"
+                        and "control." The real answer is we were too deep into the project before we
+                        realized what we'd gotten ourselves into. Sunk cost fallacy is real.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>What CSS features are supported?</summary>
+                    <p>
+                        120+ properties! Flexbox, Grid, transforms, gradients, animations... basically
+                        everything except the things you'll definitely need. Check the test suite and
+                        pray your use case is covered.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Does it support JavaScript?</summary>
+                    <p>
+                        No, and that's a feature, not a bug. You want interactivity? Use Rust. You want
+                        type safety? Rust. You want to mass 10 hours debugging why your click handler
+                        doesn't work? Go use Electron.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Why does it look like Star Wars Episode III?</summary>
+                    <p>
+                        Because just like Anakin, this project started with hope and good intentions.
+                        "I'll just implement a simple HTML renderer," we said. "It'll be quick," we said.
+                        Now we're debugging float layouts at 2am questioning our life choices.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Is it production-ready?</summary>
+                    <p>
+                        Define "production." Define "ready." If your production environment is forgiving
+                        and your CSS is simple, sure! If you need pixel-perfect rendering of complex
+                        layouts... maybe test thoroughly first. And have a backup plan.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Why no table support?</summary>
+                    <p>
+                        Have you ever read the CSS table layout spec? It's 47 pages of pain. The code
+                        looked at the spec and said "no." We respect its decision. Use Grid instead.
+                        It's 2024. Tables are for data, not layout.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>How accurate is the rendering?</summary>
+                    <p>
+                        We have 214 tests that pass! That means for 214 specific HTML files, we match
+                        Chrome. For everything else? It's an adventure. Every bug is a surprise feature.
+                        Every fix creates two new edge cases.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Will this end well?</summary>
+                    <p>
+                        Probably not. But that's never stopped anyone before. The codebase grows,
+                        the edge cases multiply, and somewhere in the distance, we hear the Imperial
+                        March playing. But hey, at least the gradients look pretty.
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Where is the source code?</summary>
+                    <p>
+                        Yeah... about that. The source code is not publicly available. We're deeply
+                        ashamed of what's in there. Trust me bro, you don't want to see it. Some things
+                        are better left in the shadows. Just enjoy the pretty pixels and don't ask
+                        questions about the eldritch horrors that generate them.
+                    </p>
+                </details>
+            </div>
+        </section>
+
+
+        <section class="section quote-section">
+            <blockquote>
+                "You were supposed to destroy the complexity, not join it!"
+                <cite>&mdash; Every developer who looked at the codebase</cite>
+            </blockquote>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="footer-logo">Hokuto</span>
+                <p>A vibecoded mess. But it's our mess.</p>
+            </div>
+            <div class="footer-links">
+                <a href="demonstration.html">Test Suite</a>
+                <a href="wasm/index.html">WASM Demo</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Built with Rust. Rendered with OpenGL. Debugged with tears.</p>
+            <p class="footer-disclaimer">No CSS specs were fully read in the making of this project.</p>
+        </div>
+    </footer>
+</body>
+</html>

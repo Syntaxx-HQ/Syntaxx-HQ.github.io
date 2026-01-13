@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1200, initial-scale=0.5, minimum-scale=0.25, maximum-scale=2, user-scalable=yes">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Hokuto WebAssembly Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background: #16213e;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #0f3460;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+        }
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .tab {
+            background: transparent;
+            color: #888;
+            border: 1px solid #0f3460;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .tab:hover {
+            background: #0f3460;
+            color: #e0e0e0;
+        }
+        .tab.active {
+            background: #4fc3f7;
+            color: #1a1a2e;
+            border-color: #4fc3f7;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .view {
+            display: none;
+            flex: 1;
+        }
+        .view.active {
+            display: flex;
+        }
+
+        /* Playground styles */
+        #playground {
+            flex-direction: row;
+            padding: 1rem;
+            gap: 1rem;
+        }
+        .panel {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .preview-panel {
+            flex: 2;
+            min-height: 600px;
+        }
+        .editor-panel {
+            flex: 1;
+            min-width: 400px;
+        }
+        .panel h2 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #81c784;
+        }
+        textarea {
+            flex: 1;
+            background: #0f3460;
+            color: #e0e0e0;
+            border: 1px solid #1a1a2e;
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-family: "Fira Code", "Monaco", monospace;
+            font-size: 13px;
+            resize: none;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4fc3f7;
+        }
+        #canvas {
+            flex: 1;
+            background: white;
+            border-radius: 4px;
+            width: 100%;
+        }
+        #canvas:focus, #showroom-canvas:focus {
+            outline: 2px solid #4fc3f7;
+        }
+        .toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        button {
+            background: #4fc3f7;
+            color: #1a1a2e;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #81d4fa;
+        }
+        .status {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+        .error {
+            color: #ff6b6b;
+        }
+
+        /* Showroom styles */
+        #showroom {
+            flex-direction: row;
+            height: calc(100vh - 60px);
+            max-height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 300px;
+            min-width: 300px;
+            background: #16213e;
+            border-right: 1px solid #0f3460;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid #0f3460;
+        }
+        .sidebar-header input {
+            width: 100%;
+            padding: 0.5rem;
+            background: #0f3460;
+            border: 1px solid #1a1a2e;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        .sidebar-header input:focus {
+            outline: none;
+            border-color: #4fc3f7;
+        }
+        .example-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        .example-item {
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 2px;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+        .example-item:hover {
+            background: #0f3460;
+        }
+        .example-item.active {
+            background: #4fc3f7;
+            color: #1a1a2e;
+        }
+        .example-item .category {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 2px;
+        }
+        .example-item.active .category {
+            color: #16213e;
+        }
+        .showroom-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+        }
+        .showroom-preview {
+            flex: 1;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+        #showroom-canvas {
+            flex: 1;
+            background: white;
+            border-radius: 4px;
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            min-height: 0;
+        }
+        .showroom-info {
+            padding: 0.5rem 1rem;
+            background: #16213e;
+            border-top: 1px solid #0f3460;
+            font-size: 13px;
+            color: #888;
+            flex-shrink: 0;
+        }
+        .example-count {
+            color: #4fc3f7;
+            font-size: 12px;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #0f3460;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hokuto WebAssembly</h1>
+        <div class="tabs">
+            <button class="tab active" data-view="playground">Playground</button>
+            <button class="tab" data-view="showroom">Showroom</button>
+        </div>
+        <div class="status" id="status">Loading...</div>
+    </header>
+
+    <!-- Playground View -->
+    <main>
+        <div id="playground" class="view active">
+            <div class="panel editor-panel">
+                <h2>HTML</h2>
+                <textarea id="html-editor"><!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background: #1a1a2e;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+        }
+        h1 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+        .box {
+            background: #ff6b9d;
+            color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello Hokuto!</h1>
+        <p>This is rendered using WebGL.</p>
+        <div class="box">Box 1</div>
+        <div class="box">Box 2</div>
+        <div class="box">Box 3</div>
+    </div>
+</body>
+</html></textarea>
+                <div class="toolbar">
+                    <button id="render-btn">Render</button>
+                </div>
+            </div>
+            <div class="panel preview-panel">
+                <h2>Preview (WebGL)</h2>
+                <canvas id="canvas" tabindex="0"></canvas>
+            </div>
+        </div>
+
+        <!-- Showroom View -->
+        <div id="showroom" class="view">
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <input type="text" id="search-input" placeholder="Search examples...">
+                </div>
+                <div class="example-count" id="example-count">Loading...</div>
+                <div class="example-list" id="example-list"></div>
+            </div>
+            <div class="showroom-content">
+                <div class="showroom-preview">
+                    <canvas id="showroom-canvas" tabindex="0"></canvas>
+                </div>
+                <div class="showroom-info" id="showroom-info">Select an example from the list</div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import init, { HokutoRenderer, version } from './pkg/hokuto_wasm.js';
+
+        // Single renderer approach - only one active at a time for mobile compatibility
+        let renderer = null;
+        let currentCanvas = null;
+        let examples = [];
+        let currentExample = null;
+        let activeView = 'playground';
+
+        async function main() {
+            try {
+                // Initialize WASM module
+                document.getElementById('status').textContent = 'Loading WASM...';
+                await init();
+
+                const ver = version();
+                console.log(`Hokuto WASM v${ver}`);
+
+                // Create initial renderer for playground
+                document.getElementById('status').textContent = 'Creating renderer...';
+                renderer = new HokutoRenderer('canvas');
+                currentCanvas = 'canvas';
+
+                document.getElementById('status').textContent = `Ready (v${ver})`;
+
+                // Initial render
+                doPlaygroundRender();
+
+                // Set up playground
+                setupPlayground();
+
+                // Set up tabs
+                setupTabs();
+
+                // Load showroom examples
+                await loadShowroom();
+
+            } catch (err) {
+                console.error('Failed to initialize:', err);
+                document.getElementById('status').textContent = `Error: ${err}`;
+                document.getElementById('status').classList.add('error');
+            }
+        }
+
+        function setupPlayground() {
+            document.getElementById('render-btn').addEventListener('click', doPlaygroundRender);
+
+            let timeout;
+            document.getElementById('html-editor').addEventListener('input', () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(doPlaygroundRender, 500);
+            });
+
+            const canvas = document.getElementById('canvas');
+            const resizeObserver = new ResizeObserver(entries => {
+                for (const entry of entries) {
+                    const { width, height } = entry.contentRect;
+                    if (renderer && currentCanvas === 'canvas' && width > 0 && height > 0) {
+                        renderer.resize(Math.floor(width), Math.floor(height));
+                    }
+                }
+            });
+            resizeObserver.observe(canvas);
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (renderer && currentCanvas === 'canvas') {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const result = renderer.on_mouse_move(x, y);
+                    const data = JSON.parse(result);
+                    if (data.cursor) canvas.style.cursor = data.cursor;
+                }
+            });
+
+            // Mouse down for drag selection start
+            canvas.addEventListener('mousedown', (e) => {
+                if (renderer && currentCanvas === 'canvas') {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const result = JSON.parse(renderer.on_mouse_down(x, y, e.timeStamp));
+                    // Focus canvas when clicking on an input element
+                    if (result.focused) {
+                        canvas.focus();
+                    }
+                }
+            });
+
+            // Mouse up for drag selection end
+            canvas.addEventListener('mouseup', () => {
+                if (renderer && currentCanvas === 'canvas') {
+                    renderer.on_mouse_up();
+                }
+            });
+
+            // Also handle mouseup outside the canvas
+            document.addEventListener('mouseup', () => {
+                if (renderer && currentCanvas === 'canvas') {
+                    renderer.on_mouse_up();
+                }
+            });
+
+            // Keyboard event handlers for form input
+            canvas.addEventListener('keydown', async (e) => {
+                if (renderer && currentCanvas === 'canvas' && renderer.has_focus()) {
+                    // Handle clipboard operations
+                    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
+                        if (e.key === 'c' || e.key === 'C') {
+                            // Copy
+                            const text = renderer.get_selected_text();
+                            if (text) {
+                                try {
+                                    await navigator.clipboard.writeText(text);
+                                } catch (err) {
+                                    console.error('Copy failed:', err);
+                                }
+                            }
+                            e.preventDefault();
+                            return;
+                        }
+                        if (e.key === 'x' || e.key === 'X') {
+                            // Cut
+                            const text = renderer.cut();
+                            if (text) {
+                                try {
+                                    await navigator.clipboard.writeText(text);
+                                } catch (err) {
+                                    console.error('Cut copy failed:', err);
+                                }
+                            }
+                            e.preventDefault();
+                            return;
+                        }
+                        if (e.key === 'v' || e.key === 'V') {
+                            // Paste
+                            try {
+                                const text = await navigator.clipboard.readText();
+                                if (text) {
+                                    renderer.paste(text);
+                                }
+                            } catch (err) {
+                                console.error('Paste failed:', err);
+                            }
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+
+                    const handled = renderer.on_key_down(
+                        e.key,
+                        e.ctrlKey || e.metaKey,
+                        e.shiftKey,
+                        e.altKey
+                    );
+                    if (handled) {
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            // Text input via beforeinput event (works better for international text)
+            canvas.addEventListener('beforeinput', (e) => {
+                if (renderer && currentCanvas === 'canvas' && renderer.has_focus()) {
+                    // Handle line break insertion (Enter key in some browsers)
+                    if (e.inputType === 'insertLineBreak' || e.inputType === 'insertParagraph') {
+                        // Let keydown handle this
+                        return;
+                    }
+                    if (e.data) {
+                        const handled = renderer.on_text_input(e.data);
+                        if (handled) {
+                            e.preventDefault();
+                        }
+                    }
+                }
+            });
+
+            // Fallback: keypress for text input (for browsers that don't support beforeinput well)
+            canvas.addEventListener('keypress', (e) => {
+                if (renderer && currentCanvas === 'canvas' && renderer.has_focus()) {
+                    // Skip control characters and keys with modifiers (except shift)
+                    if (e.ctrlKey || e.metaKey || e.altKey) return;
+                    if (e.key.length === 1) {
+                        const handled = renderer.on_text_input(e.key);
+                        if (handled) {
+                            e.preventDefault();
+                        }
+                    }
+                }
+            });
+
+            // Handle canvas blur
+            canvas.addEventListener('blur', () => {
+                if (renderer && currentCanvas === 'canvas') {
+                    renderer.on_blur();
+                }
+            });
+        }
+
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const viewId = tab.dataset.view;
+
+                    // Update tabs
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    // Update views
+                    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                    document.getElementById(viewId).classList.add('active');
+
+                    activeView = viewId;
+
+                    // Switch renderer to the appropriate canvas
+                    if (viewId === 'showroom') {
+                        switchToCanvas('showroom-canvas');
+                    } else {
+                        switchToCanvas('canvas');
+                    }
+                });
+            });
+        }
+
+        function switchToCanvas(canvasId) {
+            if (currentCanvas === canvasId && renderer) {
+                // Already on this canvas, just re-render
+                requestAnimationFrame(() => {
+                    if (canvasId === 'showroom-canvas' && currentExample) {
+                        doShowroomRender();
+                    } else if (canvasId === 'canvas') {
+                        doPlaygroundRender();
+                    }
+                });
+                return;
+            }
+
+            // Wait for canvas to be visible
+            requestAnimationFrame(() => {
+                const canvas = document.getElementById(canvasId);
+                const rect = canvas.getBoundingClientRect();
+                console.log(`Switching to ${canvasId}, size: ${rect.width}x${rect.height}`);
+
+                // Create new renderer for this canvas
+                // The old renderer will be garbage collected
+                renderer = new HokutoRenderer(canvasId);
+                currentCanvas = canvasId;
+
+                // Set initial size
+                if (rect.width > 0 && rect.height > 0) {
+                    renderer.resize(Math.floor(rect.width), Math.floor(rect.height));
+                }
+
+                // Setup resize observer for showroom
+                if (canvasId === 'showroom-canvas') {
+                    setupShowroomCanvas();
+                }
+
+                // Render content
+                if (canvasId === 'showroom-canvas' && currentExample) {
+                    doShowroomRender();
+                } else if (canvasId === 'canvas') {
+                    doPlaygroundRender();
+                }
+            });
+        }
+
+        let isRendering = false;
+        let showroomResizeObserver = null;
+
+        function setupShowroomCanvas() {
+            // Only set up once
+            if (showroomResizeObserver) return;
+
+            const canvas = document.getElementById('showroom-canvas');
+            showroomResizeObserver = new ResizeObserver(entries => {
+                for (const entry of entries) {
+                    const { width, height } = entry.contentRect;
+                    if (renderer && currentCanvas === 'showroom-canvas' && width > 0 && height > 0 && !isRendering) {
+                        renderer.resize(Math.floor(width), Math.floor(height));
+                        if (currentExample) {
+                            doShowroomRender();
+                        }
+                    }
+                }
+            });
+            showroomResizeObserver.observe(canvas);
+
+            // Mouse events for showroom
+            canvas.addEventListener('mousemove', (e) => {
+                if (renderer && currentCanvas === 'showroom-canvas') {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const result = renderer.on_mouse_move(x, y);
+                    const data = JSON.parse(result);
+                    if (data.cursor) canvas.style.cursor = data.cursor;
+                }
+            });
+
+            // Mouse down for drag selection start
+            canvas.addEventListener('mousedown', (e) => {
+                if (renderer && currentCanvas === 'showroom-canvas') {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const result = JSON.parse(renderer.on_mouse_down(x, y, e.timeStamp));
+                    if (result.focused) {
+                        canvas.focus();
+                    }
+                }
+            });
+
+            // Mouse up for drag selection end
+            canvas.addEventListener('mouseup', () => {
+                if (renderer && currentCanvas === 'showroom-canvas') {
+                    renderer.on_mouse_up();
+                }
+            });
+
+            // Keyboard event handlers for form input
+            canvas.addEventListener('keydown', async (e) => {
+                if (renderer && currentCanvas === 'showroom-canvas' && renderer.has_focus()) {
+                    // Handle clipboard operations
+                    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
+                        if (e.key === 'c' || e.key === 'C') {
+                            const text = renderer.get_selected_text();
+                            if (text) {
+                                try {
+                                    await navigator.clipboard.writeText(text);
+                                } catch (err) {
+                                    console.error('Copy failed:', err);
+                                }
+                            }
+                            e.preventDefault();
+                            return;
+                        }
+                        if (e.key === 'x' || e.key === 'X') {
+                            const text = renderer.cut();
+                            if (text) {
+                                try {
+                                    await navigator.clipboard.writeText(text);
+                                } catch (err) {
+                                    console.error('Cut copy failed:', err);
+                                }
+                            }
+                            e.preventDefault();
+                            return;
+                        }
+                        if (e.key === 'v' || e.key === 'V') {
+                            try {
+                                const text = await navigator.clipboard.readText();
+                                if (text) {
+                                    renderer.paste(text);
+                                }
+                            } catch (err) {
+                                console.error('Paste failed:', err);
+                            }
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+
+                    const handled = renderer.on_key_down(
+                        e.key,
+                        e.ctrlKey || e.metaKey,
+                        e.shiftKey,
+                        e.altKey
+                    );
+                    if (handled) {
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            canvas.addEventListener('beforeinput', (e) => {
+                if (renderer && currentCanvas === 'showroom-canvas' && renderer.has_focus()) {
+                    // Handle line break insertion (Enter key in some browsers)
+                    if (e.inputType === 'insertLineBreak' || e.inputType === 'insertParagraph') {
+                        // Let keydown handle this
+                        return;
+                    }
+                    if (e.data) {
+                        const handled = renderer.on_text_input(e.data);
+                        if (handled) {
+                            e.preventDefault();
+                        }
+                    }
+                }
+            });
+
+            canvas.addEventListener('keypress', (e) => {
+                if (renderer && currentCanvas === 'showroom-canvas' && renderer.has_focus()) {
+                    if (e.ctrlKey || e.metaKey || e.altKey) return;
+                    if (e.key.length === 1) {
+                        const handled = renderer.on_text_input(e.key);
+                        if (handled) {
+                            e.preventDefault();
+                        }
+                    }
+                }
+            });
+
+            canvas.addEventListener('blur', () => {
+                if (renderer && currentCanvas === 'showroom-canvas') {
+                    renderer.on_blur();
+                }
+            });
+        }
+
+        function doShowroomRender() {
+            console.log('doShowroomRender called, renderer:', !!renderer, 'canvas:', currentCanvas, 'example:', currentExample?.id);
+            if (!renderer || currentCanvas !== 'showroom-canvas' || !currentExample || isRendering) return;
+
+            isRendering = true;
+            setTimeout(() => {
+                try {
+                    console.log('Rendering example:', currentExample.id);
+                    renderer.render(currentExample.content, null);
+                    document.getElementById('showroom-info').textContent = `${currentExample.id} - ${currentExample.title}`;
+                    console.log('Render complete');
+                } catch (err) {
+                    console.error('Render error for', currentExample.id, ':', err);
+                    document.getElementById('showroom-info').textContent = `Error rendering ${currentExample.id}: ${err.message || err}`;
+                    document.getElementById('showroom-info').style.color = '#ff6b6b';
+                    setTimeout(() => {
+                        document.getElementById('showroom-info').style.color = '';
+                    }, 3000);
+                } finally {
+                    isRendering = false;
+                }
+            }, 0);
+        }
+
+        async function loadShowroom() {
+            try {
+                const response = await fetch('./showroom.json');
+                const data = await response.json();
+                examples = data.examples;
+
+                document.getElementById('example-count').textContent = `${examples.length} examples`;
+
+                renderExampleList(examples);
+
+                // Set up search
+                document.getElementById('search-input').addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const filtered = examples.filter(ex =>
+                        ex.title.toLowerCase().includes(query) ||
+                        ex.id.toLowerCase().includes(query)
+                    );
+                    renderExampleList(filtered);
+                });
+
+            } catch (err) {
+                console.error('Failed to load showroom:', err);
+                document.getElementById('example-count').textContent = 'Failed to load';
+            }
+        }
+
+        function renderExampleList(exampleList) {
+            const container = document.getElementById('example-list');
+            container.innerHTML = '';
+
+            exampleList.forEach(example => {
+                const item = document.createElement('div');
+                item.className = 'example-item' + (currentExample?.id === example.id ? ' active' : '');
+                item.innerHTML = `
+                    <div class="category">${example.category}</div>
+                    <div>${example.title}</div>
+                `;
+                item.addEventListener('click', () => selectExample(example));
+                container.appendChild(item);
+            });
+        }
+
+        function selectExample(example) {
+            currentExample = example;
+
+            // Update info
+            document.getElementById('showroom-info').textContent = `${example.id} - ${example.title}`;
+
+            // Update list highlighting (without re-rendering the whole list)
+            document.querySelectorAll('.example-item').forEach((item, index) => {
+                const isActive = item.querySelector('div:last-child')?.textContent === example.title;
+                item.classList.toggle('active', isActive);
+            });
+
+            // Render after UI updates
+            doShowroomRender();
+        }
+
+        function doPlaygroundRender() {
+            if (!renderer || currentCanvas !== 'canvas') return;
+
+            const html = document.getElementById('html-editor').value;
+
+            try {
+                renderer.render(html, null);
+            } catch (err) {
+                console.error('Render error:', err);
+            }
+        }
+
+        main();
+    </script>
+</body>
+</html>
