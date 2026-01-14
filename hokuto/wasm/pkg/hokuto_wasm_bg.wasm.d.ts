@@ -1,0 +1,33 @@
+/* tslint:disable */
+/* eslint-disable */
+export const memory: WebAssembly.Memory;
+export const __wbg_hokutorenderer_free: (a: number, b: number) => void;
+export const hokutorenderer_new: (a: number, b: number, c: number) => void;
+export const hokutorenderer_render: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+export const hokutorenderer_resize: (a: number, b: number, c: number) => void;
+export const hokutorenderer_on_mouse_move: (a: number, b: number, c: number) => number;
+export const hokutorenderer_on_mouse_down: (a: number, b: number, c: number, d: number) => number;
+export const hokutorenderer_on_mouse_up: (a: number) => void;
+export const hokutorenderer_on_click: (a: number, b: number, c: number) => number;
+export const hokutorenderer_on_key_down: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
+export const hokutorenderer_on_text_input: (a: number, b: number, c: number) => number;
+export const hokutorenderer_on_blur: (a: number) => void;
+export const hokutorenderer_has_focus: (a: number) => number;
+export const hokutorenderer_get_input_value: (a: number, b: number, c: number) => void;
+export const hokutorenderer_set_input_value: (a: number, b: number, c: number, d: number) => void;
+export const hokutorenderer_is_checked: (a: number, b: number) => number;
+export const hokutorenderer_set_checked: (a: number, b: number, c: number) => void;
+export const hokutorenderer_width: (a: number) => number;
+export const hokutorenderer_height: (a: number) => number;
+export const hokutorenderer_get_selected_text: (a: number, b: number) => void;
+export const hokutorenderer_paste: (a: number, b: number, c: number) => number;
+export const hokutorenderer_cut: (a: number, b: number) => void;
+export const log: (a: number, b: number) => void;
+export const version: (a: number) => void;
+export const init: () => void;
+export const __wbindgen_export: (a: number, b: number) => number;
+export const __wbindgen_export2: (a: number, b: number, c: number, d: number) => number;
+export const __wbindgen_export3: (a: number) => void;
+export const __wbindgen_export4: (a: number, b: number, c: number) => void;
+export const __wbindgen_add_to_stack_pointer: (a: number) => number;
+export const __wbindgen_start: () => void;
